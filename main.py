@@ -18,7 +18,7 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'sqlite:///blog.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL1", 'sqlite:///blog.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -32,6 +32,7 @@ gravatar = Gravatar(app,
                     force_lower=False,
                     use_ssl=False,
                     base_url=None)
+
 
 ##CONFIGURE TABLES
 
@@ -49,6 +50,7 @@ class BlogPost(db.Model):
     author = relationship("User", back_populates="posts")
     comments = relationship("Comment", back_populates="parent_post")
 
+
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +59,7 @@ class Comment(db.Model):
     comment_author = relationship("User", back_populates="comments")
     post_id = db.Column(db.Integer, ForeignKey('blog_posts.id'))
     parent_post = relationship("BlogPost", back_populates="comments")
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -67,7 +70,8 @@ class User(UserMixin, db.Model):
     posts = relationship("BlogPost", back_populates="author")
     comments = relationship("Comment", back_populates="comment_author")
 
-db.create_all()
+
+# db.create_all()
 
 
 @login_manager.user_loader
@@ -81,6 +85,7 @@ def admin_only(f):
         if current_user.is_anonymous or current_user.id != 1:
             return abort(403)
         return f(*args, **kwargs)
+
     return decorated_function
 
 
